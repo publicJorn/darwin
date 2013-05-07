@@ -3,23 +3,23 @@ class Darwin {
 	private $config;
 	private $router;
 	
+	private $darwin_root = '';
+	private $app_root = '';
+	
 	public function __construct($config) {
-		spl_autoload_register('Darwin::classLoader');
+		// Init class loader
+		require_once(__DIR__ .'/ClassLoader.class.php');
+		ClassLoader::$root_class_dirs = array(__DIR__);
+		spl_autoload_register('ClassLoader::load');
 		
+		// Init the rest
 		$this->config = new DarwinConfig($config);
-
+		$this->darwin_root = __DIR__;
+		$this->app_root = defined(APP_ROOT)? APP_ROOT : substr(__DIR__, 0, strrpos(__DIR__, DIRECTORY_SEPARATOR));
+		
 		$this->defineRoutes();
-		 
+		
 		// $this->setConstants();
-	}
-
-	/**
-	 * Autoload classes -very basic, only loads classes in root of classes folder
-	 * @param  string $class_name
-	 * @return void
-	 */
-	public static function classLoader($class_name) {
-		include __DIR__ .'/'. $class_name .'.class.php';
 	}
 
 	/**
@@ -36,18 +36,14 @@ class Darwin {
 	 * @return void
 	 */
 	private function defineRoutes() {
-		$this->router = new Router();
+		$this->router = new Router($this->darwin_root .'/controllers/');
 
-		// Add Darwins default routes
-		$this->router->add('/', 'RootAction');
-		$this->router->add('/darwin', 'DarwinAction');
-		
 		// Loop over and add custom routes
-		if (isset($this->config->routes)) {
-			foreach ($this->config->routes as $uri => $action) {
-				$this->router->add($uri, $action);
-			}
-		}
+//		if (isset($this->config->routes)) {
+//			foreach ($this->config->routes as $uri => $action) {
+//				$this->router->add($uri, $action);
+//			}
+//		}
 	}
 
 	/**

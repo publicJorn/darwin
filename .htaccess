@@ -1,5 +1,6 @@
 RewriteEngine On
-RewriteBase /_projects/darwin3/
+#RewriteBase should be set on Darwin install (@ home /_projects/darwin3/)
+RewriteBase /darwin3/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php?uri=$1 [QSA,L]

@@ -65,9 +65,14 @@ class Log {
 		self::$logs[$i] = array(
 			'severity' => $severity,
 			'message' => $msg,
-			'in_file' => $debug[$history]['file'],
-			'at_line' => $debug[$history]['line']
+			'in_file' => isset($debug[$history]['file'])? $debug[$history]['file'] : '',
+			'at_line' => isset($debug[$history]['file'])? $debug[$history]['line'] : ''
 		);
+		
+		// Set context if not specified -uses classname if available, defaults to filename
+		if ((!$ctx || is_int($ctx)) && isset($debug[0]['class'])) {
+			$ctx = $debug[0]['class'];
+		}
 		
 		// If context is a string, we'll append it to the log
 		if ($ctx && is_string($ctx)) {
